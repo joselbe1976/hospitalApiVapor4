@@ -17,6 +17,10 @@ final class Patients : Model , Content{
     @Field(key: "nif") var nif:String
     // other possibles: fecha nacimiento
    
+    // Relacion N a N con Doctors. Asi accedo desde un paciente a sus doctores
+    @Siblings(through: PatientsDoctors.self, from: \.$patient, to: \.$doctor ) var doctors:[Doctors]
+    
+    
     init(){}
     
     init(id:UUID? = nil, name:String, nif:String){

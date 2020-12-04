@@ -15,6 +15,9 @@ final class Specialities : Model , Content{
     
     @ID(custom: "id") var id:UUID?
     @Field(key: "name") var name:String
+    
+    // relacion Virtual para ver Doctores de una specialidad
+    @Children(for: \.$speciality) var doctors:[Doctors]
    
     init(){}
     
