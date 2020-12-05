@@ -33,7 +33,25 @@ public func configure(_ app: Application) throws {
     
     //JWT Config
     app.jwt.signers.use(.hs256(key: "2020AppleCoding2019"))
-
+    
+    //COnfig JWT con Key certificados RSA256 -------
+    // securizamos con clave provada
+    /*
+    let urlCertPrivado = URL(fileURLWithPath: app.directory.workingDirectory).appendingPathComponent("jwtRS256.key.prv")
+    
+    let urlCertPublico = URL(fileURLWithPath: app.directory.workingDirectory).appendingPathComponent("jwtRS256.key.pub")
+    
+    // cert. Privado
+    let privateKey = try Data(contentsOf: urlCertPrivado)
+    let privateSigner = try JWTSigner.rs256(key: .private(pem: privateKey))
+    // Cert. Publico
+    let privateKeyPublica = try Data(contentsOf: urlCertPublico)
+    let publicSigner = try JWTSigner.rs256(key: .private(pem: privateKeyPublica))
+   
+    app.jwt.signers.use(privateSigner, kid: JWKIdentifier("private"))
+    app.jwt.signers.use(publicSigner, kid: JWKIdentifier("public"), isDefault: true) //isDefault le dice que pille esa por defcto para validar cualquier JWT (cualqwuier token JWT)
+    */
+    
     // register routes
     try routes(app)
 }
