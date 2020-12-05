@@ -29,3 +29,11 @@ final class Doctors : Model , Content{
     }
 }
 
+
+// registro de un doctor
+struct DoctorRegister : Content {
+    let name : String
+    let especialidad : UUID
+    let email : String
+    var password : String
+}

@@ -29,3 +29,11 @@ final class Patients : Model , Content{
         self.nif = nif
     }
 }
+
+// for Regirer
+struct PatientsRegister : Content {
+    let name : String
+    let nif : String
+    let email : String
+    var password : String
+}

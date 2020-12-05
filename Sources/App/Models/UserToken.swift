@@ -8,7 +8,7 @@
 import Vapor
 import Fluent
 import JWT
-
+/*
 // modelo Auth2. User - Token
 final class UserToken:  Model, Content{
     static let schema = "user_token"
@@ -33,6 +33,7 @@ final class UserToken:  Model, Content{
     }
 }
 
+
 extension UserToken : ModelTokenAuthenticatable{
   
     static var valueKey = \UserToken.$tokenValue  // le decimos donde está el Token
@@ -48,13 +49,15 @@ extension UserToken : ModelTokenAuthenticatable{
         return expiry > Date()  // la fecha de expiracion(con hora) sea mayor que ahora
  }
 }
+ */
 
 // JWT Payload
 struct PayloadApp : JWTPayload {
     var email : SubjectClaim  // identifica el sujeto principal del JWT
     var expiration : ExpirationClaim // Expiracion time
     
-    var isAdmin : Bool // aqui cosas que queremos. roles, id empleado etc
+    var isDoctor : Bool // indicamos si es un doctor
+    var identify : UUID // identificador del medico o paciente
     
     // funcion de verificacion: me envian
     func verify(using signer: JWTSigner) throws {

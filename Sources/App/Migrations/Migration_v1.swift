@@ -95,9 +95,12 @@ struct CreateUsersApp_v1 : Migration {
             .field(.email, .string, .required)
             .field(.password, .string, .required)
             .unique(on: .email) // email dato único
+            .field("doctor", .uuid) // opcional
+            .foreignKey("doctor", references: Doctors.schema, "id", onDelete: .cascade, onUpdate: .cascade, name: "FK_Doctor_UsersApp") // FK con Tabla Doctors.
+            .field("patient", .uuid) // opcional
+            .foreignKey("patient", references: Patients.schema, "id", onDelete: .setNull, onUpdate: .cascade, name: "FK_Patient_UsersApp")  // FK con Tabla
             .create()
     }
-
     
     // si se hecha a tras la migración
     func revert(on database: Database) -> EventLoopFuture<Void> {
@@ -107,6 +110,7 @@ struct CreateUsersApp_v1 : Migration {
 }
 
 
+/*
 struct CreateUserToken_V1: Migration {
     func prepare(on database: Database) -> EventLoopFuture<Void> {
         database.schema(UserToken.schema)
@@ -124,7 +128,7 @@ struct CreateUserToken_V1: Migration {
     }
 
 }
-
+*/
 
 
 struct Create_Data_v1: Migration {
