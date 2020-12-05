@@ -22,10 +22,16 @@ final class MedicalAppointments : Model , Content{
     
     init(){}
     
-    init(id:UUID? = nil, date:Date, hour:Int, treatment:String?, doctor:Doctors){
+    init(id:UUID? = nil, date:Date, hour:Int, treatment:String?, doctor:UUID, patient:UUID?, reserved:Int=0){
         self.id = id
-        self.name = name
-        self.$speciality.id = speciality
+        self.date = date
+        self.hour = hour
+        self.treatment = treatment
+        self.$doctor.id = doctor
+        self.$patient.id = patient
+        self.reserved = reserved
+        
+        
     }
 }
 
