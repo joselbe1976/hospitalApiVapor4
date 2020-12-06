@@ -16,15 +16,66 @@ struct PatientsController : RouteCollection {
         
         // Seguridad JWT
         let tokenAppjwt = routes.grouped("api","patients")
-       /*
-        tokenAppjwt.get("specialities", use: testTokenJWTDoctor)
-        tokenAppjwt.get("doctors", use: testTokenJWTPatient)
-        tokenAppjwt.get("agendadiadoctor", use: testTokenJWTPatient)
+       
+        tokenAppjwt.get("specialities", use: getAllScpecialities) // devuelve las especialidades
+        tokenAppjwt.post("doctors", use: doctorsBySpeciality) // busca doctores por especialidad
+        tokenAppjwt.post("agenda", use: doctorAgenda)  // Adenda del doctor para un día. Muestra horas libres
+        /*
+        
+  
         tokenAppjwt.put("register", use: testTokenJWTPatient)
         tokenAppjwt.get("citas", use: testTokenJWTPatient)
  */
     
     }
+    
+    
+    func doctorAgenda(_ req:Request) throws -> EventLoopFuture<[MedicalAppointments]> {
+        let payload = try req.jwt.verify(as: PayloadApp.self)
+        if payload.isDoctor{ return req.eventLoop.makeFailedFuture(Abort(.badRequest))}
+     
+        // Decode JSOn Body
+        let filters = try req.content.decode(MedicalAppointmentsRequestFilter.self)
+        
+        return MedicalAppointments
+            .query(on: req.db)
+            .group(.and){ group in
+                group
+                    .filter(\.$doctor.$id  == filters.doctorID!)
+                    .filter(\.$date == filters.date!)
+                    .filter(\.$reserved == 0)
+            }
+            .with(\.$patient)
+            .with(\.$doctor)
+            .all()
+     
+    }
+    
+    
+    func doctorsBySpeciality(_ req:Request) throws -> EventLoopFuture<[Doctors]> {
+        let payload = try req.jwt.verify(as: PayloadApp.self)
+        if payload.isDoctor{ return req.eventLoop.makeFailedFuture(Abort(.badRequest))}
+     
+        // Decode JSOn Body
+        let filters = try req.content.decode(DoctorBySpecialityFilter.self)
+        
+        return Doctors
+            .query(on: req.db)
+            .filter(\.$speciality.$id == filters.speciality!)
+            .all()
+            
+        
+    }
+    
+    func getAllScpecialities(_ req:Request) throws -> EventLoopFuture<[Specialities]> {
+        let payload = try req.jwt.verify(as: PayloadApp.self)
+        if payload.isDoctor{ return req.eventLoop.makeFailedFuture(Abort(.badRequest))}
+     
+        return Specialities
+            .query(on: req.db)
+            .all()
+    }
+    
 }
 
 

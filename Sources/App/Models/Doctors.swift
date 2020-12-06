@@ -37,3 +37,7 @@ struct DoctorRegister : Content {
     let email : String
     var password : String
 }
+
+struct DoctorBySpecialityFilter : Content {
+    let speciality : UUID?
+}

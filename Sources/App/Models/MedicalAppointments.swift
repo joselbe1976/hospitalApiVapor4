@@ -73,4 +73,5 @@ struct MedicalAppointmentsRequestFilter : Content {
     var hour : Int?
     var patientID : UUID?
     var reserved: Int?
+    var doctorID : UUID?
 }

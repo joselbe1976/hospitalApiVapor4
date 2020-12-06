@@ -15,10 +15,10 @@ struct DoctorsController : RouteCollection {
         // Seguridad JWT
         let tokenAppjwt = routes.grouped("api","doctors")
        
-        tokenAppjwt.post("add", use: addAgendDay)
-        tokenAppjwt.get("all", use: getAllDays)
-        tokenAppjwt.put("treatment", use: addTreatment)
-        tokenAppjwt.post("patientsdaylist", use: patientsDayList)
+        tokenAppjwt.post("add", use: addAgendDay) //Añade a la agenda para una fecha y hora
+        tokenAppjwt.get("all", use: getAllDays) // devuelve todo lo de un medico de la agenda
+        tokenAppjwt.put("treatment", use: addTreatment) // asigna tratamiento para un dia y hora, siempre que haya paciente
+        tokenAppjwt.post("patientsdaylist", use: patientsDayList) // devuelve la agenda de un día con pacientes asignados
     
 
     }
