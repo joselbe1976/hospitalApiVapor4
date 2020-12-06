@@ -35,4 +35,42 @@ final class MedicalAppointments : Model , Content{
     }
 }
 
+// Response encript
+struct CipherResponse:Content {
+    let node:String
+}
 
+struct MedicalAppointmentsRequest : Content {
+    var id:UUID?
+    var date : Date
+    var hour : Int
+    var treatment : String?
+    var doctorID : UUID
+    var patientID : UUID?
+    var reserved: Int?
+}
+
+struct  MedicalAppointmentsResponse : Content {
+    var id:UUID
+    var date : Date
+    var hour : Int
+    var treatment : String?
+    var doctorID : UUID
+    var patientID : UUID?
+    var reserved: Int?
+    var patientName : String?
+}
+
+struct  MedicalAppointmentsRequestTreatment : Content {
+    var id:UUID
+    var treatment : String?
+}
+
+// Se usa para poder hacer filtros sobre la agenda (Citas medicas)
+struct MedicalAppointmentsRequestFilter : Content {
+    var id:UUID?
+    var date : Date?
+    var hour : Int?
+    var patientID : UUID?
+    var reserved: Int?
+}
