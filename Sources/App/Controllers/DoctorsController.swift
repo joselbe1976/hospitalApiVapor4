@@ -10,6 +10,8 @@ import Vapor
 import JWT
 
 struct DoctorsController : RouteCollection {
+    let keyS = SymmetricKey(data: Data(OfuscateData))
+    
     func boot(routes: RoutesBuilder) throws {
         
         // Seguridad JWT
@@ -42,16 +44,9 @@ struct DoctorsController : RouteCollection {
             .with(\.$patient)
             .with(\.$doctor)
             .all()
-           /* .map{ data in
-                
-                data.map{ dataDay in
-                    MedicalAppointmentsResponse(id: dataDay.id!, date: dataDay.date, hour: dataDay.hour, treatment: dataDay.treatment, doctorID: dataDay.doctor.id!, patientID: dataDay.patient?.id ?? nil, reserved: dataDay.reserved, patientName: dataDay.$patient.value.na)
-                }
-            }
- */
     }
     
-    // actualiza el trataniento de una cita
+    // actualiza el trataniento de una cita, encriptando solo ese campo
     func addTreatment(_ req:Request) throws -> EventLoopFuture<HTTPStatus> {
         //JWT
         let payload = try req.jwt.verify(as: PayloadApp.self)
@@ -67,7 +62,17 @@ struct DoctorsController : RouteCollection {
             .flatMap{ apppointment in
                 // si no hay asignado un paciente, no se puede actualizar el tratamiento
                 if let _ = apppointment.$patient.id {
-                    apppointment.treatment = requestMedicaApointment.treatment
+                    // Se encripta al ghuardarlo y el cliente ya lo desencriptará
+                    
+                    let datos = requestMedicaApointment.treatment!.data(using: .utf8)
+                    
+                    guard let mensajeCifrado = try? AES.GCM.seal(datos!, using: keyS),
+                          let cifradoTratamiento = mensajeCifrado.combined?.base64EncodedString() else {
+                        return req.eventLoop.makeFailedFuture(Abort(.notFound))
+                     }
+ 
+                    apppointment.treatment = cifradoTratamiento
+
                     return apppointment
                         .update(on: req.db)
                         .transform(to: .ok)

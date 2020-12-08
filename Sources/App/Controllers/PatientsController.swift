@@ -10,7 +10,7 @@ import Vapor
 import JWT
 
 struct PatientsController : RouteCollection {
-    let keyS = SymmetricKey(data: Data(datoOfuscado))
+    let keyS = SymmetricKey(data: Data(OfuscateData))
     
     func boot(routes: RoutesBuilder) throws {
         
@@ -173,30 +173,4 @@ struct PatientsController : RouteCollection {
             .query(on: req.db)
             .all()
     }
-    
 }
-
-
-/*
- ofuscar el JSON
- */
-/*
-func getAll(_ req:Request) throws -> EventLoopFuture<CipherResponse> {
-    try req.auth.require(UserToken.self)
-    return Scores
-        .query(on: req.db)
-        .with(\.$composer) { composer in
-            composer.with(\.$nationality)
-        }
-        .with(\.$category)
-        .all()
-        .flatMapThrowing { composers in
-            guard let composerJSON = try? JSONEncoder().encode(composers),
-                  let mensajeCifrado = try? AES.GCM.seal(composerJSON, using: keyS),
-                  let cifrado = mensajeCifrado.combined?.base64EncodedString() else {
-                throw Abort(.notFound)
-            }
-            return CipherResponse(node: cifrado)
-        }
-}
- */
