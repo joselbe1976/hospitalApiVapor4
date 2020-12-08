@@ -19,7 +19,7 @@ public func configure(_ app: Application) throws {
     app.migrations.add(PatientsDoctors_v1())
     app.migrations.add(MedicalAppointments_v1())
     app.migrations.add(CreateUsersApp_v1())
-   // app.migrations.add(CreateUserToken_V1())
+
 
     // Data init
     app.migrations.add(Create_Data_v1())
