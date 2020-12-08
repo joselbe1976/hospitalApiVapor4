@@ -21,15 +21,17 @@ struct RegisterController : RouteCollection {
             .first()
             .flatMap{ exist in
                 if exist == nil{
-                    return doc
-                        .create(on: req.db)
-                        .flatMap{
-                            // creamos el usuario de la Aplicación
-                            let user = UsersApp(email: registerDoctor.email , password: registerDoctor.password, patient: nil, doctor : doc.id)
-                            return user
-                                .create(on: req.db)
-                                .transform(to: .ok)
-                        }
+                    return req.db.transaction { database in // Create a Transaction for 2 inserts.
+                        return doc
+                            .create(on: database)
+                            .flatMap{
+                                // creamos el usuario de la Aplicación
+                                let user = UsersApp(email: registerDoctor.email , password: registerDoctor.password, patient: nil, doctor : doc.id)
+                                return user
+                                    .create(on: database)
+                                    .transform(to: .ok)
+                            }
+                    }
                 }else{
                     // si existe, damos error
                     return req.eventLoop.makeFailedFuture(Abort(.badRequest))
@@ -51,15 +53,17 @@ struct RegisterController : RouteCollection {
             .first()
             .flatMap{ exist in
                 if exist == nil{
-                    return pat
-                        .create(on: req.db)
-                        .flatMap{
-                            // creamos el usuario de la Aplicación
-                            let user = UsersApp(email: registerPatient.email , password: registerPatient.password, patient: pat.id, doctor : nil)
-                            return user
-                                .create(on: req.db)
-                                .transform(to: .ok)
-                        }
+                    return req.db.transaction { database in // transaction for 2 inserts
+                        return pat
+                            .create(on: database)
+                            .flatMap{
+                                // creamos el usuario de la Aplicación
+                                let user = UsersApp(email: registerPatient.email , password: registerPatient.password, patient: pat.id, doctor : nil)
+                                return user
+                                    .create(on: database)
+                                    .transform(to: .ok)
+                            }
+                    }
                 }else{
                     // si existe, damos error
                     return req.eventLoop.makeFailedFuture(Abort(.badRequest))
