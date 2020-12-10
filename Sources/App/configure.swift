@@ -8,9 +8,17 @@ import JWT
 // configures your application
 public func configure(_ app: Application) throws {
     // uncomment to serve files from /Public folder
-    // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+    app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
     app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
+    
+    app.views.use(.leaf)
+    app.leaf.cache.isEnabled = app.environment.isRelease // activa la cache solo en produccion, y no en Desarrollo
+
+    // midlewares de Seguridad para la Web Leaf
+    app.middleware.use(app.sessions.middleware)
+    app.middleware.use(UsersApp.sessionAuthenticator())
+    
 
     // Create Migration tables
     app.migrations.add(Specialities_v1())
@@ -24,9 +32,8 @@ public func configure(_ app: Application) throws {
     // Data init
     app.migrations.add(Create_Data_v1())
 
-    app.views.use(.leaf)
-    app.leaf.cache.isEnabled = app.environment.isRelease // activa la cache solo en produccion, y no en Desarrollo
 
+    
     
     //encriptacion del sistema
     app.passwords.use(.bcrypt)

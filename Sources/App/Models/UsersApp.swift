@@ -38,8 +38,8 @@ final class UsersApp : Model, Content{
 
 }
 
-// autenticacion basica
-extension  UsersApp : ModelAuthenticatable{
+// autenticacion basica. ModelAuthenticatable para Web Leaf
+extension  UsersApp : ModelAuthenticatable, ModelCredentialsAuthenticatable{
     // Security: Basic Auythetication
     static var usernameKey = \UsersApp.$email
     static var passwordHashKey = \UsersApp.$password
@@ -49,6 +49,15 @@ extension  UsersApp : ModelAuthenticatable{
         try Bcrypt.verify(password, created: self.password)
     }
 }
+
+// para Web
+extension UsersApp: SessionAuthenticatable {
+    typealias SessionID = UUID
+    var sessionID: UUID {
+        self.id!
+    }
+}
+
 
 //Validacion basica
 extension  UsersApp : Validatable{
@@ -61,3 +70,16 @@ extension  UsersApp : Validatable{
 }
 
 
+// web
+
+struct UserSessionAuthenticator: SessionAuthenticator {
+    typealias User = UsersApp
+    
+    func authenticate(sessionID: UUID, for request: Request) -> EventLoopFuture<Void> {
+        UsersApp.find(sessionID, on: request.db).map { user in
+            if let user = user {
+                request.auth.login(user)
+            }
+        }
+    }
+}

@@ -27,6 +27,8 @@ final class Doctors : Model , Content{
         self.name = name
         self.$speciality.id = speciality
     }
+    
+    
 }
 
 
