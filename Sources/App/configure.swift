@@ -1,5 +1,5 @@
 import Fluent
-import FluentSQLiteDriver
+import FluentPostgresDriver
 import Leaf
 import Vapor
 import JWT
@@ -9,8 +9,18 @@ import JWT
 public func configure(_ app: Application) throws {
     // uncomment to serve files from /Public folder
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
-
-    app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
+    // SQL LITE
+    //app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
+    
+    //POStGRE
+    if let environment = Environment.get("DATABASE_URL"), let databaseURL = URL(string: environment) {
+        // Conexion en Heroku
+        try app.databases.use(.postgres(url: databaseURL), as: .psql)
+    } else {
+        // Conexion a mi servidor.
+        app.databases.use(.postgres(hostname: "127.0.0.1", username: "hospital", password: "hospital", database: "hospital"), as: .psql)
+    }
+    
     
     app.views.use(.leaf)
     app.leaf.cache.isEnabled = app.environment.isRelease // activa la cache solo en produccion, y no en Desarrollo
