@@ -18,7 +18,10 @@ public func configure(_ app: Application) throws {
         try app.databases.use(.postgres(url: databaseURL), as: .psql)
     } else {
         // Conexion a mi servidor.
-        app.databases.use(.postgres(hostname: "127.0.0.1", username: "hospital", password: "hospital", database: "hospital"), as: .psql)
+        
+        let databaseURL = URL(string: "postgres://cwrcuhmyevzpdi:6a7b7176868e20d9c41825fb178021d9f08893250b5ee42e69cbd0abeb60bb93@ec2-54-247-107-109.eu-west-1.compute.amazonaws.com:5432/d84k4krfg8rva5")
+        try app.databases.use(.postgres(url: databaseURL!), as: .psql)
+       
     }
     
     
