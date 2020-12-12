@@ -19,8 +19,7 @@ public func configure(_ app: Application) throws {
     } else {
         // Conexion a mi servidor.
         
-        let databaseURL = URL(string: "postgres://cwrcuhmyevzpdi:6a7b7176868e20d9c41825fb178021d9f08893250b5ee42e69cbd0abeb60bb93@ec2-54-247-107-109.eu-west-1.compute.amazonaws.com:5432/d84k4krfg8rva5")
-        try app.databases.use(.postgres(url: databaseURL!), as: .psql)
+       fatalError("DATABASE_URL is not configurated in Heroku")
        
     }
     
